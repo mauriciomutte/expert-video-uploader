@@ -3,18 +3,25 @@ import View from './view.js'
 
 const clock = new Clock()
 const view = new View()
+const worker = new Worker('./src/worker/worker.js', {
+  type: 'module',
+})
+
+worker.onmessage = ({ data }) => {
+  if (data.status !== 'done') return
+  clock.stop()
+  view.updateElapeseTime(`Process took ${took.replace('ago', ' ')}`)
+}
+
+worker.onerror = (error) => console.error('worker error', error)
 
 let took = ''
 view.configureOnFileChange((file) => {
+  worker.postMessage({ file })
   clock.start((time) => {
     took = time
     view.updateElapeseTime(`Process started ${time}`)
   })
-
-  setTimeout(() => {
-    clock.stop()
-    view.updateElapeseTime(`Process took ${took.replace('ago', ' ')}`)
-  }, 5000)
 })
 
 // For tests we always need to click in input file, search the file and click to upload
