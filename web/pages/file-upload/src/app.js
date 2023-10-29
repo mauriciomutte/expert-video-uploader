@@ -16,3 +16,21 @@ view.configureOnFileChange((file) => {
     view.updateElapeseTime(`Process took ${took.replace('ago', ' ')}`)
   }, 5000)
 })
+
+// For tests we always need to click in input file, search the file and click to upload
+// This code simulates a user's file upload action during testing.
+async function fakeFetch() {
+  const filePath = '/videos/frag_bunny.mp4'
+  const response = await fetch(filePath)
+
+  const file = new File([await response.blob()], filePath, {
+    type: 'video/mp4',
+    lastModified: Date.now(),
+  })
+  const event = new Event('change')
+  Reflect.defineProperty(event, 'target', { value: { files: [file] } })
+
+  document.getElementById('fileUpload').dispatchEvent(event)
+}
+
+fakeFetch()
