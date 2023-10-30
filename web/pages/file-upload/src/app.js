@@ -17,7 +17,8 @@ worker.onerror = (error) => console.error('worker error', error)
 
 let took = ''
 view.configureOnFileChange((file) => {
-  worker.postMessage({ file })
+  const canvas = view.getCanvas()
+  worker.postMessage({ file, canvas }, [canvas])
   clock.start((time) => {
     took = time
     view.updateElapeseTime(`Process started ${time}`)
