@@ -11,7 +11,7 @@ export default class VideoProcessor {
   }
 
   /** @returns {ReadableStream} */
-  mp4Decoder(stream, encoderConfig) {
+  mp4Decoder(stream) {
     return new ReadableStream({
       start: async (controller) => {
         const decoder = new VideoDecoder({
@@ -27,7 +27,14 @@ export default class VideoProcessor {
 
         return this.#mp4Demuxer
           .run(stream, {
-            onConfig(config) {
+            async onConfig(config) {
+              const { supported } = await VideoDecoder.isConfigSupported(config)
+              if (!supported) {
+                const message = 'Unsupported codec configuration'
+                console.error(message, config)
+                controller.error(new Error(message))
+                return
+              }
               decoder.configure(config)
             },
             /** @param {EncodedVideoChunk} chunk */
@@ -47,7 +54,7 @@ export default class VideoProcessor {
   async process({ file, encoderConfig, renderFrame }) {
     const stream = file.stream()
     const fileName = file.name.split('/').pop().replace('.mp4', '')
-    await this.mp4Decoder(stream, encoderConfig).pipeTo(
+    await this.mp4Decoder(stream).pipeTo(
       new WritableStream({
         write(frame) {
           renderFrame(frame)
