@@ -3,6 +3,7 @@ import WebMWriter from '../libs/webm-writer2.js'
 import VideoProcessor from './videoProcessor.js'
 import MP4Demuxer from './mp4Demuxer.js'
 import CanvasRenderer from './canvasRenderer.js'
+import Service from '../service/index.js'
 
 const qvgaConstraints = { width: 320, height: 240 }
 // @suggestion: we could use this constraints in the future
@@ -32,7 +33,10 @@ const webmWriterConfig = {
 
 const mp4Demuxer = new MP4Demuxer()
 const webMWriter = new WebMWriter(webmWriterConfig)
-const videoProcessor = new VideoProcessor({ mp4Demuxer, webMWriter })
+const service = new Service({
+  url: 'http://localhost:3000',
+})
+const videoProcessor = new VideoProcessor({ mp4Demuxer, webMWriter, service })
 
 onmessage = async ({ data }) => {
   const renderFrame = CanvasRenderer.getRenderer(data.canvas)

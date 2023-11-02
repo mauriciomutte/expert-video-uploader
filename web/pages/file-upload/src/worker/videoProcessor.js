@@ -1,16 +1,19 @@
 export default class VideoProcessor {
   #mp4Demuxer
   #webMWriter
+  #service
 
   /**
    *
    * @param {object} options
    * @param {import('./mp4Demuxer.js').default} options.mp4Demuxer
    * @param {import('./../libs/webm-writer2.js').default} options.webMWriter
+   * @param {import('./../service/index.js').default} options.service
    */
-  constructor({ mp4Demuxer, webMWriter }) {
+  constructor({ mp4Demuxer, webMWriter, service }) {
     this.#mp4Demuxer = mp4Demuxer
     this.#webMWriter = webMWriter
+    this.#service = service
   }
 
   /** @returns {ReadableStream} */
@@ -132,13 +135,19 @@ export default class VideoProcessor {
   }
 
   upload(filename, resolution, type) {
+    const fileExtension = type.split('/').pop()
     const chunks = []
     let byteCount = 0
+    let segmentCount = 0
 
     const triggerUpload = async (chunks) => {
       const blob = new Blob(chunks, { type })
+      const fileSegment = ++segmentCount
 
-      // @todo: add upload service
+      await this.#service.uploadFile({
+        filename: `${filename}-${resolution}.${fileSegment}.${fileExtension}`,
+        fileBuffer: blob,
+      })
 
       // reset chunks
       chunks.length = 0
