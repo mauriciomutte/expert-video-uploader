@@ -31,13 +31,6 @@ export default class VideoProcessor {
         return this.#mp4Demuxer
           .run(stream, {
             async onConfig(config) {
-              const { supported } = await VideoDecoder.isConfigSupported(config)
-              if (!supported) {
-                const message = 'Unsupported codec configuration'
-                console.error(message, config)
-                controller.error(new Error(message))
-                return
-              }
               decoder.configure(config)
             },
             /** @param {EncodedVideoChunk} chunk */
