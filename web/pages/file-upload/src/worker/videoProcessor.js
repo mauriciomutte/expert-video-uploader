@@ -175,7 +175,7 @@ export default class VideoProcessor {
     })
   }
 
-  async process({ file, encoderConfig, renderFrame }) {
+  async process({ file, encoderConfig, renderFrame, sendMessage }) {
     const stream = file.stream()
     const fileName = file.name.split('/').pop().replace('.mp4', '')
     await this.mp4Decoder(stream)
@@ -183,5 +183,7 @@ export default class VideoProcessor {
       .pipeThrough(this.renderDecodedFramesAndGetEncodedChunks(renderFrame))
       .pipeThrough(this.transformIntoWebM())
       .pipeTo(this.upload(fileName, '144p', 'video/webm'))
+
+    sendMessage({ status: 'done' })
   }
 }
