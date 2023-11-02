@@ -100,11 +100,43 @@ export default class VideoProcessor {
     return { readable, writable }
   }
 
+  renderDecodedFramesAndGetEncodedChunks(renderFrame) {
+    let _decoder
+    return new TransformStream({
+      start: (controller) => {
+        _decoder = new VideoDecoder({
+          output: (frame) => {
+            renderFrame(frame)
+            frame.close()
+          },
+          error: (err) => {
+            console.error('VideoDecoder', err)
+            controller.error(err)
+          },
+        })
+      },
+      /**
+       *
+       * @param {EncodedVideoChunk} encodedChunk
+       * @param {TransformStreamDefaultController} controller
+       */
+      async transform(encodedChunk, controller) {
+        if (encodedChunk.type === 'config') {
+          await _decoder.configure(encodedChunk.config)
+          return
+        }
+        _decoder.decode(encodedChunk)
+        controller.enqueue(encodedChunk)
+      },
+    })
+  }
+
   async process({ file, encoderConfig, renderFrame }) {
     const stream = file.stream()
     const fileName = file.name.split('/').pop().replace('.mp4', '')
     await this.mp4Decoder(stream)
       .pipeThrough(this.encode144p(encoderConfig))
+      .pipeThrough(this.renderDecodedFramesAndGetEncodedChunks(renderFrame))
       .pipeTo(
         new WritableStream({
           write(frame) {},
