@@ -10,7 +10,7 @@ const worker = new Worker('./src/worker/worker.js', {
 worker.onmessage = ({ data }) => {
   if (data.status !== 'done') return
   clock.stop()
-  view.updateElapeseTime(`Process took ${took.replace('ago', ' ')}`)
+  view.updateElapsedTime(`Process took ${took.replace('ago', ' ')}`)
 }
 
 worker.onerror = (error) => console.error('worker error', error)
@@ -21,7 +21,7 @@ view.configureOnFileChange((file) => {
   worker.postMessage({ file, canvas }, [canvas])
   clock.start((time) => {
     took = time
-    view.updateElapeseTime(`Process started ${time}`)
+    view.updateElapsedTime(`Process started ${time}`)
   })
 })
 
@@ -40,5 +40,3 @@ async function fakeFetch() {
 
   document.getElementById('fileUpload').dispatchEvent(event)
 }
-
-fakeFetch()

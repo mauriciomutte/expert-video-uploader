@@ -51,7 +51,7 @@ export default class View {
     this.#fileUpload.addEventListener('change', this.onChange(fn))
   }
 
-  updateElapeseTime(text) {
+  updateElapsedTime(text) {
     this.#elapsed.innerText = text
   }
 }
