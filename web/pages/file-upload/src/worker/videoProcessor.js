@@ -50,7 +50,7 @@ export default class VideoProcessor {
         if (!supported) {
           const message = 'Unsupported encoder configuration'
           console.error(message, config)
-          controller.error(new Error(message))
+          controller.error(message)
           return
         }
 
@@ -75,8 +75,7 @@ export default class VideoProcessor {
             controller.error(err)
           },
         })
-
-        _encoder.configure(config)
+        await _encoder.configure(config)
       },
     })
 
@@ -95,13 +94,12 @@ export default class VideoProcessor {
     return new TransformStream({
       start: (controller) => {
         _decoder = new VideoDecoder({
-          output: (frame) => {
+          output(frame) {
             renderFrame(frame)
-            frame.close()
           },
-          error: (err) => {
-            console.error('VideoDecoder', err)
-            controller.error(err)
+          error(e) {
+            console.error('error at renderFrames', e)
+            controller.error(e)
           },
         })
       },
@@ -124,12 +122,11 @@ export default class VideoProcessor {
   transformIntoWebM() {
     const writable = new WritableStream({
       write: (chunk) => {
-        this.#webMWriter.write(chunk)
+        this.#webMWriter.addFrame(chunk)
       },
     })
-
     return {
-      redable: this.#webMWriter.getStream(),
+      readable: this.#webMWriter.getStream(),
       writable,
     }
   }
