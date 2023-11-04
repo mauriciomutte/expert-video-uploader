@@ -6,11 +6,7 @@
 
 This project aims to facilitate the seamless uploading and processing of MP4 video files through a web application. Leveraging a combination of cutting-edge web technologies and APIs, we have created a robust system that ensures efficient video processing while maintaining the responsiveness of the user interface.
 
-
-
-https://github.com/mauriciomutte/expert-video-uploader/assets/20569339/271caf16-95ab-4749-9973-7c1900d2337e
-
-
+https://github.com/mauriciomutte/expert-video-uploader/assets/20569339/1cc43f45-0ec4-4a5e-a3b9-e5610b9385b0
 
 ## Key Features
 
