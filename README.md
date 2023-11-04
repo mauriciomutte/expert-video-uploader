@@ -6,6 +6,12 @@
 
 This project aims to facilitate the seamless uploading and processing of MP4 video files through a web application. Leveraging a combination of cutting-edge web technologies and APIs, we have created a robust system that ensures efficient video processing while maintaining the responsiveness of the user interface.
 
+
+
+https://github.com/mauriciomutte/expert-video-uploader/assets/20569339/271caf16-95ab-4749-9973-7c1900d2337e
+
+
+
 ## Key Features
 
 **1. Efficient Video Processing:** The heart of this project lies in its ability to process MP4 video files without freezing or slowing down the user's browser. This is achieved through the utilization of the Web Workers API, which allows video processing to occur in the background without blocking the main thread.
